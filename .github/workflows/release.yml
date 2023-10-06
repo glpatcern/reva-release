@@ -30,7 +30,7 @@ jobs:
           OSMAJ="$(echo $VERSION_ID | cut -c1)"
           cat reva-release/ceph.repo.in | sed "s/OSMAJOR/$OSMAJ/" > /etc/yum.repos.d/ceph.repo
           [[ $OSMAJ -eq "7" ]] && sed -i "s/pacific/octopus/" /etc/yum.repos.d/ceph.repo && yum -y install yum-plugin-priorities && sed -i '/RemovePathPostfixes.*/d' reva-release/revad.spec
-          yum install -y golang make rpm-build libcephfs-devel
+          yum install -y golang make rpm-build libcephfs-devel librbd-devel librados-devel 
       - name: Bump version in spec file
         run: |
           cd reva-release
@@ -48,6 +48,7 @@ jobs:
           cp reva-release/revad.spec reva/revad.spec
       - name: Create reva RPM
         run: |
+          go env
           rm -rf ~/.cache/go-build
           cd reva
           make -f Makefile.rpm rpm
@@ -55,7 +56,6 @@ jobs:
           mv cernbox-revad*.rpm /release/
         env:
           CGO_ENABLED: 1
-          STATIC: 1
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
