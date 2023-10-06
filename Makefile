@@ -16,8 +16,10 @@ rpmdefines=--define='_topdir ${rpmbuild}' \
         --define='_rpmdir %{_topdir}/RPMS'
 
 dist: clean
+	export STATIC=0
 	make revad-ceph
 	@mv cmd/revad/revad cmd/revad/revad-ceph
+	export STATIC=1
 	make revad
 	@mkdir -p $(PACKAGE)-$(VERSION)
 	@cp -r $(FILES_TO_RPM) $(PACKAGE)-$(VERSION)
