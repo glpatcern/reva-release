@@ -17,9 +17,11 @@ rpmdefines=--define='_topdir ${rpmbuild}' \
 
 dist: clean
 	export STATIC=0
+	go env
 	make revad-ceph
 	@mv cmd/revad/revad cmd/revad/revad-ceph
 	export STATIC=1
+	go env
 	make revad
 	@mkdir -p $(PACKAGE)-$(VERSION)
 	@cp -r $(FILES_TO_RPM) $(PACKAGE)-$(VERSION)

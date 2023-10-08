@@ -48,7 +48,6 @@ jobs:
           cp reva-release/revad.spec reva/revad.spec
       - name: Create reva RPMs
         run: |
-          go env
           rm -rf ~/.cache/go-build
           cd reva
           make -f Makefile.rpm rpm
