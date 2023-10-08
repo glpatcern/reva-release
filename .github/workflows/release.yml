@@ -42,11 +42,11 @@ jobs:
           repository: cernbox/reva
           path: reva
           ref: ${{ inputs.branch }}
-      - name: Copy necessary files for building the RPM
+      - name: Copy necessary files for building the RPMs
         run: |
           cp reva-release/Makefile reva/Makefile.rpm
           cp reva-release/revad.spec reva/revad.spec
-      - name: Create reva RPM
+      - name: Create reva RPMs
         run: |
           go env
           rm -rf ~/.cache/go-build
@@ -61,7 +61,7 @@ jobs:
         with:
           draft: false
           prerelease: false
-          files: release/cernbox-revad*.rpm
+          files: /release/cernbox-revad*.rpm
           name: Version ${{ env.version }}
           tag_name: v${{ env.version }}
   
