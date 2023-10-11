@@ -1,4 +1,3 @@
-FILES_TO_RPM = cmd/revad/revad cmd/revad/revad-ceph
 SPECFILE = $(shell find . -maxdepth 1 -type f -name *.spec)
 PACKAGE  = $(shell awk '$$1 == "Name:"     { print $$2 }' $(SPECFILE) )
 VERSION  = $(shell awk '$$1 == "Version:"  { print $$2 }' $(SPECFILE) )
@@ -18,10 +17,10 @@ rpmdefines=--define='_topdir ${rpmbuild}' \
 dist: clean
 	go env
 	make revad-ceph
-	@mv cmd/revad/revad cmd/revad/revad-ceph
+	mv cmd/revad/revad cmd/revad/revad-ceph
 	make revad
 	@mkdir -p $(PACKAGE)-$(VERSION)
-	@cp -r $(FILES_TO_RPM) $(PACKAGE)-$(VERSION)
+	cp -r cmd/revad/revad cmd/revad/revad-ceph $(PACKAGE)-$(VERSION)
 	tar cpfz ./$(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
 
 prepare: dist
