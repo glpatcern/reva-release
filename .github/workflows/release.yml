@@ -30,7 +30,7 @@ jobs:
           OSMAJ="$(echo $VERSION_ID | cut -c1)"
           cat reva-release/ceph.repo.in | sed "s/OSMAJOR/$OSMAJ/" > /etc/yum.repos.d/ceph.repo
           [[ $OSMAJ -eq "7" ]] && sed -i "s/pacific/octopus/" /etc/yum.repos.d/ceph.repo && yum -y install yum-plugin-priorities && sed -i '/RemovePathPostfixes.*/d' reva-release/revad.spec
-          yum install -y golang git make rpm-build libcephfs-devel librbd-devel librados-devel 
+          yum install -y golang git make rpm-build glibc-static libcephfs-devel librbd-devel librados-devel 
       - name: Bump version in spec file
         run: |
           cd reva-release
