@@ -1,6 +1,6 @@
 [ceph]
 name=Ceph pacific OSMAJOR
-baseurl=http://linuxsoft.cern.ch/mirror/download.ceph.com/rpm-pacific/elOSMAJOR/$basearch
+baseurl=https://linuxsoft.cern.ch/mirror/download.ceph.com/rpm-pacific/elOSMAJOR/$basearch
 enabled=True
 gpgcheck=1
 gpgkey=http://linuxsoft.cern.ch/mirror/download.ceph.com/release.asc
