@@ -4,7 +4,7 @@
 
 Name: cernbox-revad
 Summary: Reva for CERNBox
-Version: 0.0.47
+Version: 0.0.48
 Release: 1%{?dist}
 License: AGPLv3
 BuildRoot: %{_tmppath}/%{name}-buildroot
@@ -63,6 +63,8 @@ install -m 755 revad-ceph %buildroot/usr/bin/revad.ceph
 rm -rf %buildroot/
 
 %changelog
+* Tue Oct 10 2023 cernbox-admins[bot] <cernbox-admins@cern.ch> 0.0.48
+- v0.0.48
 * Wed Aug 23 2023 cernbox-admins[bot] <cernbox-admins@cern.ch> 0.0.47
 - v0.0.47
 * Fri Aug 18 2023 cernbox-admins[bot] <cernbox-admins@cern.ch> 0.0.46
