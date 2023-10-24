@@ -91,7 +91,7 @@ jobs:
           tagging_message: v${{ env.version }}
       - name: Download artifacts zip
         id: download
-        uses: actions/checkout@v3
+        uses: actions/download-artifact@v3
       - name: Unzip artifact
         env:
           ARTIFACT_PATH: ${{ steps.download.outputs.download-path }}
