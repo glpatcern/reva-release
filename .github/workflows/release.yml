@@ -48,23 +48,20 @@ jobs:
           cp reva-release/revad.spec reva/revad.spec
       - name: Create reva RPMs
         run: |
+          set -x
           rm -rf ~/.cache/go-build
           cd reva
           make -f Makefile.rpm rpm
           mkdir /release
-          names=(${${{ matrix.container }}//\// })
-          dist=${names[1]}
-          path="/release/cernbox-revad-${{ env.version }}-${dist}.rpm"
-          mv cernbox-revad*.rpm $path
-          echo "artifactPath=$path" >> $GITHUB_ENV
-          echo "artifactName=`basename $path`" >> $GITHUB_ENV
+          mv cernbox-revad*.rpm /release
         env:
           CGO_ENABLED: 1
+          CONTAINER: ${{ matrix.container }}
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.artifactName }}
-          path: ${{ env.artifactPath }}
+          name: cernbox-revad
+          path: /release
           retention-days: 1
   
   reporelease:
