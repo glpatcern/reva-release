@@ -52,17 +52,20 @@ jobs:
           cd reva
           make -f Makefile.rpm rpm
           mkdir /release
-          mv cernbox-revad*.rpm /release/
+          names=(${${{ matrix.container }}//\// })
+          dist=${names[1]}
+          path="/release/cernbox-revad-${{ env.version }}-${dist}.rpm"
+          mv cernbox-revad*.rpm $path
+          echo "artifactPath=$path" >> $GITHUB_ENV
+          echo "artifactName=`basename $path`" >> $GITHUB_ENV
         env:
           CGO_ENABLED: 1
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
         with:
-          draft: false
-          prerelease: false
-          files: /release/cernbox-revad*.rpm
-          name: Version ${{ env.version }}
-          tag_name: v${{ env.version }}
+          name: ${{ env.artifactName }}
+          path: ${{ env.artifactPath }}
+          retention-days: 1
   
   reporelease:
     needs: build
@@ -75,7 +78,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: reva-release
-      - name: Push version to repo
+      - name: Bump version in spec file
+        run: |
+          cd reva-release
+          go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch"
+          echo "version=$(awk '$1 == "Version:" {print $2}' revad.spec)" >> $GITHUB_ENV
+      - name: Push version
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           repository: reva-release
@@ -84,3 +92,14 @@ jobs:
           commit_user_name: CERNBox Admins Bot
           commit_user_email: cernbox-admins@cern.ch
           tagging_message: v${{ env.version }}
+      - name: Download all artifacts
+        id: download
+        uses: actions/checkout@v3
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          prerelease: false
+          files: ${{ steps.download.outputs.download-path }}
+          name: Version ${{ env.version }}
+          tag_name: v${{ env.version }}
