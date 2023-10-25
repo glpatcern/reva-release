@@ -89,23 +89,14 @@ jobs:
           commit_user_name: CERNBox Admins Bot
           commit_user_email: cernbox-admins@cern.ch
           tagging_message: v${{ env.version }}
-      - name: Download artifacts zip
+      - name: Download artifacts
         id: download
         uses: actions/download-artifact@v3
-      - name: Unzip artifact
-        env:
-          ARTIFACT_PATH: ${{ steps.download.outputs.download-path }}
-        run: |
-          set -x
-          ls -R
-          apt update && apt install unzip
-          mkdir /artifacts
-          unzip "$ARTIFACT_PATH" -d /artifacts
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           draft: false
           prerelease: false
-          files: /artifacts/*
+          files: ${{ steps.download.outputs.download-path }}/cernbox-revad/*
           name: Version ${{ env.version }}
           tag_name: v${{ env.version }}
