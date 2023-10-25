@@ -96,6 +96,8 @@ jobs:
         env:
           ARTIFACT_PATH: ${{ steps.download.outputs.download-path }}
         run: |
+          set -x
+          ls -R
           apt update && apt install unzip
           mkdir /artifacts
           unzip "$ARTIFACT_PATH" -d /artifacts
