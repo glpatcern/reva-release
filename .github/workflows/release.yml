@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to be used'
+        description: 'Reva branch to be used'
         required: true
         default: 'master'
-      repo:
-        description: 'Reva repository'
+      go-version:
+        description: 'Go version'
         required: true
-        default: 'cs3org'
+        default: '1.21.3'
 
 jobs:
   build:
@@ -34,16 +34,21 @@ jobs:
           OSMAJ="$(echo $VERSION_ID | cut -c1)"
           cat reva-release/ceph.repo.in | sed "s/OSMAJOR/$OSMAJ/" > /etc/yum.repos.d/ceph.repo
           [[ $OSMAJ -eq "7" ]] && sed -i "s/pacific/octopus/" /etc/yum.repos.d/ceph.repo && yum -y install yum-plugin-priorities && sed -i '/RemovePathPostfixes.*/d' reva-release/revad.spec
-          yum install -y golang git make rpm-build glibc-static libcephfs-devel librbd-devel librados-devel 
+          yum install -y git make gcc gcc-c++ rpm-build wget glibc-static libcephfs-devel librbd-devel librados-devel
+      - name: Install golang
+        run: |
+          wget https://go.dev/dl/go${{ inputs.go-version }}.linux-amd64.tar.gz && tar xfz go${{ inputs.go-version }}.linux-amd64.tar.gz
       - name: Bump version in spec file
         run: |
+          export GOPATH=$(pwd)/go
+          export PATH=$PATH:$GOPATH/bin
           cd reva-release
           go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch"
           echo "version=$(awk '$1 == "Version:" {print $2}' revad.spec)" >> $GITHUB_ENV
       - name: Checkout reva repository
         uses: actions/checkout@v3
         with:
-          repository: ${{ inputs.repo }}/reva
+          repository: cs3org/reva
           path: reva
           ref: ${{ inputs.branch }}
       - name: Copy necessary files for building the RPMs
@@ -53,6 +58,8 @@ jobs:
       - name: Create reva RPMs
         run: |
           set -x
+          export GOPATH=$(pwd)/go
+          export PATH=$PATH:$GOPATH/bin
           rm -rf ~/.cache/go-build
           cd reva
           make -f Makefile.rpm rpm
@@ -81,6 +88,8 @@ jobs:
           path: reva-release
       - name: Bump version in spec file
         run: |
+          export GOPATH=$(pwd)/go
+          export PATH=$PATH:$GOPATH/bin
           cd reva-release
           go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch"
           echo "version=$(awk '$1 == "Version:" {print $2}' revad.spec)" >> $GITHUB_ENV
