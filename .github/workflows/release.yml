@@ -4,9 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch of the cernbox/reva repository'
+        description: 'Branch to be used'
         required: true
-        default: 'cernbox'
+        default: 'master'
+      repo:
+        description: 'Reva repository'
+        required: true
+        default: 'cs3org'
 
 jobs:
   build:
@@ -39,7 +43,7 @@ jobs:
       - name: Checkout reva repository
         uses: actions/checkout@v3
         with:
-          repository: cernbox/reva
+          repository: ${{ inputs.repo }}/reva
           path: reva
           ref: ${{ inputs.branch }}
       - name: Copy necessary files for building the RPMs
