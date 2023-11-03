@@ -18,7 +18,7 @@ dist: clean
 	go env
 	make revad-ceph
 	mv cmd/revad/revad cmd/revad/revad-ceph
-	make revad
+	make cernbox-revad
 	@mkdir -p $(PACKAGE)-$(VERSION)
 	cp -r cmd/revad/revad cmd/revad/revad-ceph $(PACKAGE)-$(VERSION)
 	tar cpfz ./$(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
