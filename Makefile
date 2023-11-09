@@ -19,8 +19,9 @@ dist: clean
 	make revad-ceph
 	mv cmd/revad/revad cmd/revad/revad-ceph
 	make cernbox-revad
+	make reva
 	@mkdir -p $(PACKAGE)-$(VERSION)
-	cp -r cmd/revad/revad cmd/revad/revad-ceph $(PACKAGE)-$(VERSION)
+	cp -r cmd/revad/revad cmd/revad/revad-ceph cmd/reva/reva $(PACKAGE)-$(VERSION)
 	tar cpfz ./$(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
 
 prepare: dist

@@ -64,15 +64,15 @@ jobs:
           cd reva
           make -f Makefile.rpm rpm
           mkdir /release
-          mv cernbox-revad*.rpm /release
+          mv cernbox-*.rpm /release
         env:
           CGO_ENABLED: 1
           CONTAINER: ${{ matrix.container }}
-      - name: Upload artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: cernbox-revad
-          path: /release
+          name: cernbox-rpms
+          path: /release/cernbox-*.rpm
           retention-days: 1
   
   reporelease:

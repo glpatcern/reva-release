@@ -14,7 +14,7 @@ Source: %{name}-%{version}.tar.gz
 Conflicts: cernbox-revad-ceph
 
 %description -n cernbox-revad
-This RPM provides REVA for CERNBox, built from github.com/cernbox/reva
+This RPM provides Reva for the CERNBox backend
 
 %package -n cernbox-revad-ceph
 Summary: Reva for CERNBox with Ceph support
@@ -24,7 +24,13 @@ BuildRequires: libcephfs2
 RemovePathPostfixes: .ceph
 
 %description -n cernbox-revad-ceph
-This RPM provides REVA for CERNBox with Ceph support, built from github.com/cernbox/reva
+This RPM provides Reva for the CERNBox backend with Ceph support
+
+%package -n cernbox-cli
+Summary: Reva CLI for CERNBox
+
+%description -n cernbox-cli
+This RPM provides reva, the command-line interface for CERNBox
 
 # Don't do any post-install weirdness, especially compiling .py files
 %define __os_install_post %{nil}
@@ -40,6 +46,7 @@ mkdir -p %buildroot/var/log/revad
 mkdir -p %buildroot/var/run/revad
 install -m 755 revad %buildroot/usr/bin/revad
 install -m 755 revad-ceph %buildroot/usr/bin/revad.ceph
+install -m 755 reva %buildroot/usr/bin/reva
 
 %preun
 
@@ -58,6 +65,10 @@ install -m 755 revad-ceph %buildroot/usr/bin/revad.ceph
 /var/log/revad
 /var/run/revad
 /usr/bin/revad.ceph
+
+%files -n cernbox-cli
+%defattr(-,root,root,-)
+/usr/bin/reva
 
 %clean
 rm -rf %buildroot/
