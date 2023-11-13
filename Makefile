@@ -4,21 +4,24 @@ VERSION  = $(shell awk '$$1 == "Version:"  { print $$2 }' $(SPECFILE) )
 RELEASE  = $(shell awk '$$1 == "Release:"  { print $$2 }' $(SPECFILE) )
 rpmbuild = ${shell pwd}/build
 
-clean:
-	@rm -rf $(PACKAGE)-$(VERSION)
-	@rm -rf $(rpmbuild)
-
 rpmdefines=--define='_topdir ${rpmbuild}' \
         --define='_sourcedir %{_topdir}/SOURCES' \
         --define='_builddir %{_topdir}/BUILD' \
         --define='_srcrpmdir %{_topdir}/SRPMS' \
         --define='_rpmdir %{_topdir}/RPMS'
 
-dist: clean
+clean:
+	@rm -rf $(PACKAGE)-$(VERSION)
+	@rm -rf $(rpmbuild)
+
+gaia:
+	go install github.com/cs3org/gaia@latest
+
+dist: clean gaia 
 	go env
 	make revad-ceph
 	mv cmd/revad/revad cmd/revad/revad-ceph
-	make revad
+	gaia build --with github.com/cernbox/reva-plugins --with github.com/cs3org/reva=$(shell pwd) -o ./cmd/revad/revad
 	@mkdir -p $(PACKAGE)-$(VERSION)
 	cp -r cmd/revad/revad cmd/revad/revad-ceph $(PACKAGE)-$(VERSION)
 	tar cpfz ./$(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
