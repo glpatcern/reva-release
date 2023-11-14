@@ -40,7 +40,7 @@ var (
 )
 
 const (
-	specFile   = "revad.spec"
+	specFile   = "cernbox-revad.spec"
 	prodBranch = "cernbox"
 )
 

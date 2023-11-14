@@ -33,7 +33,7 @@ jobs:
           source /etc/os-release
           OSMAJ="$(echo $VERSION_ID | cut -c1)"
           cat reva-release/ceph.repo.in | sed "s/OSMAJOR/$OSMAJ/" > /etc/yum.repos.d/ceph.repo
-          [[ $OSMAJ -eq "7" ]] && sed -i "s/pacific/octopus/" /etc/yum.repos.d/ceph.repo && yum -y install yum-plugin-priorities && sed -i '/RemovePathPostfixes.*/d' reva-release/revad.spec
+          [[ $OSMAJ -eq "7" ]] && sed -i "s/pacific/octopus/" /etc/yum.repos.d/ceph.repo && yum -y install yum-plugin-priorities && sed -i '/RemovePathPostfixes.*/d' reva-release/cernbox-revad.spec
           yum install -y git make gcc gcc-c++ rpm-build wget glibc-static libcephfs-devel librbd-devel librados-devel
       - name: Install golang
         run: |
@@ -44,7 +44,7 @@ jobs:
           export PATH=$PATH:$GOPATH/bin
           cd reva-release
           go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch"
-          echo "version=$(awk '$1 == "Version:" {print $2}' revad.spec)" >> $GITHUB_ENV
+          echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
       - name: Checkout reva repository
         uses: actions/checkout@v3
         with:
@@ -54,7 +54,7 @@ jobs:
       - name: Copy necessary files for building the RPMs
         run: |
           cp reva-release/Makefile reva/Makefile.rpm
-          cp reva-release/revad.spec reva/revad.spec
+          cp reva-release/cernbox-revad.spec reva/cernbox-revad.spec
       - name: Create reva RPMs
         run: |
           set -x
@@ -92,13 +92,13 @@ jobs:
           export PATH=$PATH:$GOPATH/bin
           cd reva-release
           go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch"
-          echo "version=$(awk '$1 == "Version:" {print $2}' revad.spec)" >> $GITHUB_ENV
+          echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
       - name: Push version
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           repository: reva-release
           commit_message: "Version ${{ env.version }}"
-          file_pattern: revad.spec
+          file_pattern: cernbox-revad.spec
           commit_user_name: CERNBox Admins Bot
           commit_user_email: cernbox-admins@cern.ch
           tagging_message: v${{ env.version }}
