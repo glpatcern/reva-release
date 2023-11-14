@@ -19,6 +19,7 @@ gaia:
 
 dist: clean gaia 
 	go env
+	make reva
 	make revad-ceph
 	mv cmd/revad/revad cmd/revad/revad-ceph
 	gaia build --with github.com/cernbox/reva-plugins --with github.com/cs3org/reva=$(shell pwd) -o ./cmd/revad/revad
