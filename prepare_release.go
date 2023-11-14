@@ -36,7 +36,7 @@ var (
 	author     = flag.String("author", "", "the author that creates the release")
 	email      = flag.String("email", "", "the email of the authot that creates the release")
 	versionTag = flag.String("version-tag", "", "the tag of the version")
-	version    = flag.Int("version", 0, "version to tag")
+	version    = flag.String("version", "0", "version to tag")
 )
 
 const (
@@ -67,8 +67,7 @@ func releaseNewVersion(author, email string) error {
 		return fmt.Errorf("error reading spec content: %w", err)
 	}
 
-	version := getNextVersion(specContent)
-	versionStr := fmt.Sprintf("0.0.%d", version)
+	versionStr := getNextVersion(specContent)
 	if *versionTag != "" && *versionTag != prodBranch {
 		versionStr += "." + *versionTag
 	}
@@ -141,8 +140,8 @@ func writeSpecFile(spec []string) error {
 	return nil
 }
 
-func getNextVersion(spec []string) int {
-	if *version != 0 {
+func getNextVersion(spec []string) string {
+	if *version != "0" {
 		return *version
 	}
 	for _, line := range spec {
@@ -152,9 +151,9 @@ func getNextVersion(spec []string) int {
 
 			ver, err := strconv.ParseInt(split[2], 10, 64)
 			if err != nil {
-				return -1
+				return "invalid"
 			}
-			return int(ver) + 1
+			return fmt.Sprintf("%s.%s.%d", split[0], split[1], int(ver) + 1)
 		}
 	}
 	panic("cannot find a version")
