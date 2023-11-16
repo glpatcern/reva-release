@@ -1,0 +1,6 @@
+[endpoint]
+name=End Point repository for git
+baseurl=https://packages.endpointdev.com/rhel/7/os/$basearch/
+enabled=1
+priority=1
+gpgcheck=0
