@@ -25,7 +25,7 @@ jobs:
     container: ${{ matrix.container }}
     steps:
       - name: Checkout release repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: reva-release
       - name: Install build infrastructure
@@ -46,11 +46,12 @@ jobs:
           go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch"
           echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
       - name: Checkout reva repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: cs3org/reva
           path: reva
           ref: ${{ inputs.branch }}
+          fetch-depth: 0
       - name: Copy necessary files for building the RPMs
         run: |
           cp reva-release/Makefile reva/Makefile.rpm
