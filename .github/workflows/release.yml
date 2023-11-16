@@ -33,8 +33,8 @@ jobs:
           source /etc/os-release
           OSMAJ="$(echo $VERSION_ID | cut -c1)"
           cat reva-release/ceph.repo.in | sed "s/OSMAJOR/$OSMAJ/" > /etc/yum.repos.d/ceph.repo
-          [[ $OSMAJ -eq "7" ]] && sed -i "s/pacific/octopus/" /etc/yum.repos.d/ceph.repo && yum -y install yum-plugin-priorities && sed -i '/RemovePathPostfixes.*/d' reva-release/cernbox-revad.spec
-          yum install -y git make gcc gcc-c++ rpm-build wget glibc-static libcephfs-devel librbd-devel librados-devel
+          [[ $OSMAJ -eq "7" ]] && sed -i "s/pacific/octopus/" /etc/yum.repos.d/ceph.repo && cp reva-release/endpoint.repo /etc/yum.repos.d/endpoint.repo && yum -y install yum-plugin-priorities && sed -i '/RemovePathPostfixes.*/d' reva-release/cernbox-revad.spec && echo "Adapted setup to CC7"
+          yum install -y git wget make gcc gcc-c++ rpm-build glibc-static libcephfs-devel librbd-devel librados-devel
       - name: Install golang
         run: |
           wget https://go.dev/dl/go${{ inputs.go-version }}.linux-amd64.tar.gz && tar xfz go${{ inputs.go-version }}.linux-amd64.tar.gz
@@ -51,7 +51,6 @@ jobs:
           repository: cs3org/reva
           path: reva
           ref: ${{ inputs.branch }}
-          fetch-depth: 0
       - name: Copy necessary files for building the RPMs
         run: |
           cp reva-release/Makefile reva/Makefile.rpm
@@ -73,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: cernbox-rpms
-          path: /release/cernbox-*.rpm
+          path: /release
           retention-days: 1
   
   reporelease:
@@ -111,6 +110,6 @@ jobs:
         with:
           draft: false
           prerelease: false
-          files: ${{ steps.download.outputs.download-path }}/cernbox-revad/*
+          files: ${{ steps.download.outputs.download-path }}/cernbox-rpms/*
           name: Version ${{ env.version }}
           tag_name: v${{ env.version }}
